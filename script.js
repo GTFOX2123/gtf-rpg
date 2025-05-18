@@ -1,123 +1,173 @@
-let player = null;
-let enemy = null;
-let gameOver = false;
-
-const characters = {
-  'Naruto': { hp: 100, attack: 15, defense: 5, className: 'naruto' },
-  'Sasuke': { hp: 90, attack: 18, defense: 3, className: 'sasuke' },
-  'Sakura': { hp: 110, attack: 12, defense: 7, className: 'sakura' }
+const player = {
+  name: 'Naruto',
+  maxHp: 100,
+  hp: 100,
+  attack: 20,
+  defense: 6,
+  xp: 0,
+  level: 1,
+  items: { healingScroll: 3 },
+  element: {
+    sprite: document.getElementById('player-sprite'),
+    hpBar: document.getElementById('player-hp'),
+    hpText: document.getElementById('player-hp-text')
+  }
 };
 
-const playerCharEl = document.getElementById('player-character');
-const enemyCharEl = document.getElementById('enemy-character');
-const statusEl = document.getElementById('status');
-const logEl = document.getElementById('log');
+const enemyBaseStats = {
+  name: 'Sasuke',
+  maxHp: 90,
+  hp: 90,
+  attack: 18,
+  defense: 5,
+  element: {
+    sprite: document.getElementById('enemy-sprite'),
+    hpBar: document.getElementById('enemy-hp'),
+    hpText: document.getElementById('enemy-hp-text')
+  }
+};
+
+let enemy = {...enemyBaseStats};
+let isPlayerTurn = true;
+const battleLog = document.getElementById('battle-log');
 const attackBtn = document.getElementById('attack-btn');
-const resetBtn = document.getElementById('reset-btn');
+const defendBtn = document.getElementById('defend-btn');
+const itemBtn = document.getElementById('item-btn');
+const levelDisplay = document.getElementById('level-display');
+const gameOverDiv = document.getElementById('game-over');
+const gameOverMsg = document.getElementById('game-over-message');
+const restartBtn = document.getElementById('restart-btn');
 
-function selectCharacter(name) {
-  player = {...characters[name]};
-  enemy = createEnemy(name);
-  document.getElementById('character-select').style.display = 'none';
-  document.getElementById('battle').style.display = 'block';
-
-  // Set classes for visuals
-  playerCharEl.className = 'character ' + player.className;
-  enemyCharEl.className = 'character ' + enemy.className;
-
-  updateStatus();
-  logMessage('Você escolheu ' + name + '!');
-  logMessage('Seu oponente é ' + enemy.name + '!');
-  gameOver = false;
-  attackBtn.style.display = 'inline-block';
-  resetBtn.style.display = 'none';
+function updateHpBar(character) {
+  const hpPercent = (character.hp / character.maxHp) * 100;
+  character.element.hpBar.style.width = hpPercent + '%';
+  character.element.hpText.textContent = `${character.hp} / ${character.maxHp}`;
 }
 
-function createEnemy(playerName) {
-  let names = Object.keys(characters).filter(n => n !== playerName);
-  let enemyName = names[Math.floor(Math.random() * names.length)];
-  let char = {...characters[enemyName]};
-  char.name = enemyName;
-  char.className = characters[enemyName].className;
-  return char;
+function log(message) {
+  const div = document.createElement('div');
+  div.textContent = message;
+  battleLog.appendChild(div);
+  battleLog.scrollTop = battleLog.scrollHeight;
 }
 
-function updateStatus() {
-  statusEl.innerHTML = `
-    <div>Você: ${player.hp} HP</div>
-    <div>Oponente: ${enemy.hp} HP</div>
-  `;
-}
-
-function logMessage(msg) {
-  logEl.innerHTML += `<div>${msg}</div>`;
-  logEl.scrollTop = logEl.scrollHeight;
-}
-
-function animateAttack(attackerEl, defenderEl, callback) {
-  attackerEl.classList.add('attacking');
-  setTimeout(() => {
-    attackerEl.classList.remove('attacking');
-    defenderEl.classList.add('hurt');
+function animateSprite(character, action, duration=600) {
+  character.element.sprite.classList.remove('idle','attack','hurt');
+  character.element.sprite.classList.add(action);
+  return new Promise(resolve => {
     setTimeout(() => {
-      defenderEl.classList.remove('hurt');
-      callback();
-    }, 300);
-  }, 400);
-}
-
-function attack() {
-  if(gameOver) return;
-
-  attackBtn.disabled = true;
-
-  // Jogador ataca inimigo
-  let damageToEnemy = Math.max(player.attack - enemy.defense, 1);
-
-  animateAttack(playerCharEl, enemyCharEl, () => {
-    enemy.hp -= damageToEnemy;
-    if(enemy.hp < 0) enemy.hp = 0;
-    logMessage(`Você causou ${damageToEnemy} de dano em ${enemy.name}.`);
-    updateStatus();
-
-    if(enemy.hp === 0) {
-      logMessage('Você venceu a batalha!');
-      endGame(true);
-      return;
-    }
-
-    // Inimigo ataca jogador
-    let damageToPlayer = Math.max(enemy.attack - player.defense, 1);
-
-    animateAttack(enemyCharEl, playerCharEl, () => {
-      player.hp -= damageToPlayer;
-      if(player.hp < 0) player.hp = 0;
-      logMessage(`${enemy.name} causou ${damageToPlayer} de dano em você.`);
-      updateStatus();
-
-      if(player.hp === 0) {
-        logMessage('Você perdeu a batalha!');
-        endGame(false);
-        return;
-      }
-
-      attackBtn.disabled = false;
-    });
+      character.element.sprite.classList.remove(action);
+      character.element.sprite.classList.add('idle');
+      resolve();
+    }, duration);
   });
 }
 
-function endGame(playerWon) {
-  gameOver = true;
-  attackBtn.style.display = 'none';
-  resetBtn.style.display = 'inline-block';
-  attackBtn.disabled = false;
+function playerAttack() {
+  let damage = Math.max(player.attack - enemy.defense, 1);
+  enemy.hp -= damage;
+  if(enemy.hp < 0) enemy.hp = 0;
+  log(`Você causou ${damage} de dano em ${enemy.name}.`);
+  updateHpBar(enemy);
+  return damage;
 }
 
-function resetGame() {
-  logEl.innerHTML = '';
-  document.getElementById('character-select').style.display = 'block';
-  document.getElementById('battle').style.display = 'none';
-  player = null;
-  enemy = null;
-  gameOver = false;
+function enemyAttack() {
+  let damage = Math.max(enemy.attack - player.defense, 1);
+  player.hp -= damage;
+  if(player.hp < 0) player.hp = 0;
+  log(`${enemy.name} causou ${damage} de dano em você.`);
+  updateHpBar(player);
+  return damage;
 }
+
+function enemyDecision() {
+  // Inimigo escolhe atacar ou defender (30% chance defender)
+  return Math.random() < 0.3 ? 'defend' : 'attack';
+}
+
+async function enemyTurn() {
+  isPlayerTurn = false;
+  attackBtn.disabled = true;
+  defendBtn.disabled = true;
+  itemBtn.disabled = true;
+
+  let decision = enemyDecision();
+  if(decision === 'defend') {
+    log(`${enemy.name} está se defendendo!`);
+    await animateSprite(enemy, 'attack', 400); // usar attack animação pra defender tb
+  } else {
+    await animateSprite(enemy, 'attack');
+    enemyAttack();
+  }
+
+  if(player.hp === 0) {
+    endGame(false);
+  } else {
+    isPlayerTurn = true;
+    attackBtn.disabled = false;
+    defendBtn.disabled = false;
+    itemBtn.disabled = false;
+  }
+}
+
+async function playerTurn(action) {
+  if(!isPlayerTurn) return;
+
+  attackBtn.disabled = true;
+  defendBtn.disabled = true;
+  itemBtn.disabled = true;
+
+  switch(action) {
+    case 'attack':
+      await animateSprite(player, 'attack');
+      playerAttack();
+      break;
+    case 'defend':
+      log('Você está se defendendo este turno!');
+      break;
+    case 'item':
+      if(player.items.healingScroll > 0) {
+        player.hp += 30;
+        if(player.hp > player.maxHp) player.hp = player.maxHp;
+        player.items.healingScroll--;
+        log('Você usou um Pergaminho de Cura e recuperou 30 HP!');
+        updateHpBar(player);
+      } else {
+        log('Você não tem Pergaminhos de Cura sobrando!');
+      }
+      break;
+  }
+
+  if(enemy.hp === 0) {
+    endGame(true);
+  } else {
+    await enemyTurn();
+  }
+}
+
+function endGame(playerWon) {
+  gameOverDiv.style.display = 'flex';
+  if(playerWon) {
+    gameOverMsg.textContent = 'Parabéns! Você venceu!';
+  } else {
+    gameOverMsg.textContent = 'Você foi derrotado! Tente novamente.';
+  }
+}
+
+function restartGame() {
+  player.hp = player.maxHp;
+  player.items.healingScroll = 3;
+  enemy.hp = enemy.maxHp;
+  battleLog.innerHTML = '';
+  updateHpBar(player);
+  updateHpBar(enemy);
+  gameOverDiv.style.display = 'none';
+  isPlayerTurn = true;
+  attackBtn.disabled = false;
+  defendBtn.disabled = false;
+  itemBtn.disabled = false;
+  log('Jogo reiniciado! Boa sorte!');
+}
+
+attackBtn.onclick =
