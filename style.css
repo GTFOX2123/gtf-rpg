@@ -1,112 +1,220 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #1e1e2f, #3a3a5a);
-  color: #eee;
-  text-align: center;
-  padding: 20px;
-  user-select: none;
-}
-
-#game {
-  background: #22233a;
-  padding: 30px 20px;
-  border-radius: 15px;
-  width: 360px;
-  margin: 0 auto;
-  box-shadow: 0 0 15px #6c63ff;
-  position: relative;
-}
-
-h1, h2 {
-  text-shadow: 0 0 5px #6c63ff;
-}
-
-button {
-  margin: 8px;
-  padding: 12px 25px;
-  font-size: 16px;
-  border-radius: 8px;
-  border: none;
-  background: #6c63ff;
-  color: white;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  box-shadow: 0 4px #574ccf;
-  user-select: none;
-}
-
-button:active {
-  box-shadow: 0 2px #574ccf;
-  transform: translateY(2px);
-}
-
-button:hover {
-  background-color: #5848ff;
-}
-
-#status {
-  font-weight: bold;
-  margin-bottom: 15px;
-  font-size: 18px;
-}
-
-#log {
-  background: #2a2a4a;
-  padding: 10px;
-  border-radius: 8px;
-  height: 140px;
-  overflow-y: auto;
-  font-size: 14px;
-  text-align: left;
-  box-shadow: inset 0 0 10px #6c63ff;
-}
-
-.character-container {
+  margin: 0; padding: 0;
+  font-family: 'Press Start 2P', cursive;
+  background: linear-gradient(180deg, #6a8efb, #1c2b50);
+  color: #e1e1e1;
   display: flex;
-  justify-content: space-around;
-  margin: 20px 0;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  user-select: none;
+}
+
+#game-container {
+  background: url('https://i.imgur.com/3Z4pHoV.png') no-repeat center bottom;
+  background-size: cover;
+  width: 400px;
+  height: 500px;
+  border-radius: 16px;
+  box-shadow: 0 0 40px #4264fb;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  box-sizing: border-box;
   position: relative;
-  height: 120px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 15px;
+  text-shadow: 0 0 8px #4264fb;
+}
+
+#level-display {
+  font-size: 12px;
+  margin-top: -10px;
+  color: #cbd3ff;
+}
+
+#battlefield {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  position: relative;
+  height: 180px;
+}
+
+.character-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 45%;
 }
 
 .character {
-  width: 90px;
-  height: 120px;
-  background: #6c63ff;
-  border-radius: 12px;
-  box-shadow: 0 0 10px #4a3fbd;
-  position: relative;
-  filter: drop-shadow(0 0 2px #6c63ff);
+  width: 96px;
+  height: 96px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-bottom: 8px;
+  filter: drop-shadow(0 0 4px #0008);
   transition: transform 0.3s ease;
 }
 
-.character.naruto {
-  background: linear-gradient(45deg, #ff9f43, #f39c12);
+/* Sprites animadas (3 frames) */
+.character.naruto.idle {
+  background-image: url('https://i.imgur.com/4y6zDZp.png');
+  animation: narutoIdle 1s steps(3) infinite;
 }
 
-.character.sasuke {
-  background: linear-gradient(45deg, #34495e, #2c3e50);
+.character.naruto.attack {
+  background-image: url('https://i.imgur.com/vqFAZbW.png');
+  animation: narutoAttack 0.6s steps(3) forwards;
 }
 
-.character.sakura {
-  background: linear-gradient(45deg, #e91e63, #c2185b);
+.character.naruto.hurt {
+  filter: brightness(1.5);
+  animation: hurtFlash 0.4s 2 alternate;
 }
 
-.character.attacking {
-  animation: attackAnim 0.4s ease forwards;
+.character.sasuke.idle {
+  background-image: url('https://i.imgur.com/0PAWMTm.png');
+  animation: sasukeIdle 1s steps(3) infinite;
 }
 
-.character.hurt {
-  animation: hurtAnim 0.3s ease forwards;
+.character.sasuke.attack {
+  background-image: url('https://i.imgur.com/H0tLGbl.png');
+  animation: sasukeAttack 0.6s steps(3) forwards;
 }
 
-@keyframes attackAnim {
-  0% { transform: translateX(0); }
-  50% { transform: translateX(20px); }
-  100% { transform: translateX(0); }
+.character.sasuke.hurt {
+  filter: brightness(1.5);
+  animation: hurtFlash 0.4s 2 alternate;
 }
 
-@keyframes hurtAnim {
+.hp-bar {
+  width: 100%;
+  height: 14px;
+  background: #333355;
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: inset 0 0 10px #111133;
+}
+
+.hp-fill {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #4caf50, #2e7d32);
+  transition: width 0.5s ease;
+}
+
+.hp-fill.enemy {
+  background: linear-gradient(90deg, #e53935, #b71c1c);
+}
+
+.hp-text {
+  font-size: 10px;
+  color: #cfd8dc;
+  margin-top: 4px;
+  text-shadow: 0 0 4px #0008;
+}
+
+#action-menu {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+#action-menu button {
+  padding: 10px 15px;
+  font-size: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #4264fb;
+  color: white;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px #2942a6;
+}
+
+#action-menu button:hover:not(:disabled) {
+  background-color: #5a7cfb;
+}
+
+#action-menu button:disabled {
+  background-color: #666a99;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+#battle-log {
+  background: #1c2b50cc;
+  height: 140px;
+  overflow-y: auto;
+  padding: 10px;
+  font-size: 11px;
+  border-radius: 12px;
+  box-shadow: inset 0 0 10px #4264fb;
+  user-select: text;
+}
+
+#game-over {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(28, 43, 80, 0.95);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-radius: 16px;
+  color: #fff;
+  font-size: 18px;
+  text-align: center;
+  padding: 20px;
+}
+
+#restart-btn {
+  margin-top: 15px;
+  padding: 12px 25px;
+  font-size: 16px;
+  background: #4264fb;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 4px #2942a6;
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+#restart-btn:hover {
+  background-color: #5a7cfb;
+}
+
+@keyframes narutoIdle {
+  from { background-position-x: 0; }
+  to { background-position-x: -288px; }
+}
+
+@keyframes narutoAttack {
+  from { background-position-x: 0; }
+  to { background-position-x: -288px; }
+}
+
+@keyframes sasukeIdle {
+  from { background-position-x: 0; }
+  to { background-position-x: -288px; }
+}
+
+@keyframes sasukeAttack {
+  from { background-position-x: 0; }
+  to { background-position-x: -288px; }
+}
+
+@keyframes hurtFlash {
   0% { filter: brightness(1); }
   50% { filter: brightness(2); }
   100% { filter: brightness(1); }
