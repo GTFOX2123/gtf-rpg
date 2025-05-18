@@ -1,20 +1,32 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Naruto RPG</title>
-  <link rel="stylesheet" href="style.css"/>
+  <title>GTX RPG - Naruto</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <h1>Naruto RPG Demo</h1>
-  <div id="game">
-    <p>Escolha seu personagem:</p>
-    <button onclick="selectCharacter('Naruto')">Naruto</button>
-    <button onclick="selectCharacter('Sasuke')">Sasuke</button>
-    <button onclick="selectCharacter('Sakura')">Sakura</button>
-    <div id="output"></div>
+  <div id="tela-inicial">
+    <h1>GTX RPG</h1>
+    <button id="btn-iniciar">Iniciar Jogo</button>
   </div>
-  <script src="script.js"></script>
+
+  <div id="jogo" style="display:none;">
+    <div class="personagem jogador">
+      <img id="img-jogador" src="img/naruto.png" alt="Naruto" />
+      <p>Vida: <span id="vida-jogador">100</span></p>
+    </div>
+    <div class="personagem inimigo">
+      <img id="img-inimigo" src="img/sasuke.png" alt="Sasuke" />
+      <p>Vida: <span id="vida-inimigo">100</span></p>
+    </div>
+    <div class="acoes">
+      <button id="btn-atacar">Atacar</button>
+      <button id="btn-defender">Defender</button>
+    </div>
+    <div id="mensagem"></div>
+  </div>
+
+  <script src="js/game.js"></script>
 </body>
 </html>
