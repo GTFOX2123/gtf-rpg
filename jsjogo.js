@@ -1,141 +1,161 @@
-// Variáveis do jogo
-let vidaJogador = 100;
-let vidaInimigo = 100;
-let inimigos = [
-  { nome: "Sasuke", img: "img/sasuke.png" },
-  { nome: "Gaara", img: "img/gaara.png" },
-  { nome: "Itachi", img: "img/itachi.png" }
-];
-let inimigoAtualIndex = 0;
-let defendendo = false;
+document.addEventListener("DOMContentLoaded", () => {
+  // Variáveis do jogo
+  let vidaJogador = 100;
+  let vidaInimigo = 100;
+  const inimigos = [
+    { nome: "Sasuke", img: "img/sasuke.png" },
+    { nome: "Gaara", img: "img/gaara.png" },
+    { nome: "Itachi", img: "img/itachi.png" }
+  ];
+  let inimigoAtualIndex = 0;
+  let defendendo = false;
 
-// Elementos DOM
-const telaInicial = document.getElementById("tela-inicial");
-const jogoDiv = document.getElementById("jogo");
-const imgJogador = document.getElementById("img-jogador");
-const imgInimigo = document.getElementById("img-inimigo");
-const vidaJogadorSpan = document.getElementById("vida-jogador");
-const vidaInimigoSpan = document.getElementById("vida-inimigo");
-const mensagemDiv = document.getElementById("mensagem");
+  // Elementos DOM
+  const telaInicial = document.getElementById("tela-inicial");
+  const jogoDiv = document.getElementById("jogo");
+  const imgJogador = document.getElementById("img-jogador");
+  const imgInimigo = document.getElementById("img-inimigo");
+  const vidaJogadorSpan = document.getElementById("vida-jogador");
+  const vidaInimigoSpan = document.getElementById("vida-inimigo");
+  const mensagemDiv = document.getElementById("mensagem");
 
-const somTheme = document.getElementById("theme");
+  const btnIniciar = document.getElementById("btn-iniciar");
+  const btnAtacar = document.getElementById("btn-atacar");
+  const btnDefender = document.getElementById("btn-defender");
 
-const somAtaque = new Audio("audio/attack.mp3");
-const somDefesa = new Audio("audio/defend.mp3");
-const somVitoria = new Audio("audio/victory.mp3");
-const somDerrota = new Audio("audio/defeat.mp3");
+  // Sons - opcional, se arquivos existirem
+  const somAtaque = new Audio("audio/attack.mp3");
+  const somDefesa = new Audio("audio/defend.mp3");
+  const somVitoria = new Audio("audio/victory.mp3");
+  const somDerrota = new Audio("audio/defeat.mp3");
+  const somTheme = new Audio("audio/theme.mp3");
+  somTheme.loop = true;
 
-// Função para iniciar o jogo
-function iniciarJogo() {
-  vidaJogador = 100;
-  vidaInimigo = 100;
-  inimigoAtualIndex = 0;
-  defendendo = false;
-  telaInicial.style.display = "none";
-  jogoDiv.style.display = "flex";
-  atualizarInimigo();
-  atualizarVida();
-  mensagemDiv.textContent = "Prepare-se para a batalha!";
-  somTheme.play();
-}
+  btnIniciar.addEventListener("click", iniciarJogo);
+  btnAtacar.addEventListener("click", atacar);
+  btnDefender.addEventListener("click", defender);
 
-// Atualiza o inimigo atual
-function atualizarInimigo() {
-  let inimigo = inimigos[inimigoAtualIndex];
-  imgInimigo.src = inimigo.img;
-  imgInimigo.alt = inimigo.nome;
-  vidaInimigo = 100;
-  vidaInimigoSpan.textContent = vidaInimigo;
-}
+  function iniciarJogo() {
+    vidaJogador = 100;
+    inimigoAtualIndex = 0;
+    defendendo = false;
 
-// Atualiza as barras de vida
-function atualizarVida() {
-  vidaJogadorSpan.textContent = vidaJogador;
-  vidaInimigoSpan.textContent = vidaInimigo;
-}
+    telaInicial.style.display = "none";
+    jogoDiv.style.display = "flex";
 
-// Função de ataque do jogador
-function atacar() {
-  if (vidaJogador <= 0 || vidaInimigo <= 0) return;
+    carregarInimigo();
+    atualizarVida();
 
-  let dano = Math.floor(Math.random() * 20) + 10; // Dano entre 10 e 30
-  vidaInimigo -= dano;
-  if (vidaInimigo < 0) vidaInimigo = 0;
+    mensagemDiv.textContent = "Prepare-se para a batalha!";
 
-  mensagemDiv.textContent = `Você atacou o inimigo causando ${dano} de dano!`;
-  somAtaque.play();
+    try {
+      somTheme.play();
+    } catch (e) {
+      console.log("Erro ao tocar música:", e);
+    }
+  }
 
-  atualizarVida();
-  animarAtaque(imgJogador);
-
-  if (vidaInimigo === 0) {
-    somVitoria.play();
-    mensagemDiv.textContent = `Você derrotou ${inimigos[inimigoAtualIndex].nome}!`;
-    inimigoAtualIndex++;
+  function carregarInimigo() {
     if (inimigoAtualIndex >= inimigos.length) {
-      mensagemDiv.textContent += " Parabéns, você venceu todas as batalhas!";
+      mensagemDiv.textContent = "Parabéns! Você venceu todas as batalhas!";
       jogoDiv.style.display = "none";
       telaInicial.style.display = "block";
       somTheme.pause();
-    } else {
-      setTimeout(() => {
-        atualizarInimigo();
-        mensagemDiv.textContent = "Prepare-se para a próxima batalha!";
-      }, 2000);
+      return;
     }
-  } else {
+    const inimigo = inimigos[inimigoAtualIndex];
+    vidaInimigo = 100;
+    imgInimigo.src = inimigo.img;
+    imgInimigo.alt = inimigo.nome;
+    atualizarVida();
+  }
+
+  function atualizarVida() {
+    vidaJogadorSpan.textContent = vidaJogador;
+    vidaInimigoSpan.textContent = vidaInimigo;
+  }
+
+  function atacar() {
+    if (vidaJogador <= 0 || vidaInimigo <= 0) return;
+
+    const dano = Math.floor(Math.random() * 20) + 10; // 10-29 de dano
+    vidaInimigo -= dano;
+    if (vidaInimigo < 0) vidaInimigo = 0;
+
+    mensagemDiv.textContent = `Você atacou e causou ${dano} de dano!`;
+    tocarSom(somAtaque);
+
+    animarAtaque(imgJogador);
+    atualizarVida();
+
+    if (vidaInimigo === 0) {
+      tocarSom(somVitoria);
+      mensagemDiv.textContent = `Você derrotou ${inimigos[inimigoAtualIndex].nome}!`;
+      inimigoAtualIndex++;
+
+      setTimeout(() => {
+        carregarInimigo();
+        if (inimigoAtualIndex < inimigos.length) {
+          mensagemDiv.textContent = "Prepare-se para a próxima batalha!";
+        }
+      }, 2000);
+
+    } else {
+      setTimeout(() => inimigoAtaca(), 1500);
+    }
+  }
+
+  function defender() {
+    if (vidaJogador <= 0 || vidaInimigo <= 0) return;
+
+    defendendo = true;
+    mensagemDiv.textContent = "Você está defendendo! O próximo ataque inimigo terá dano reduzido.";
+    tocarSom(somDefesa);
+
+    setTimeout(() => inimigoAtaca(), 1500);
+  }
+
+  function inimigoAtaca() {
+    if (vidaJogador <= 0 || vidaInimigo <= 0) return;
+
+    let dano = Math.floor(Math.random() * 20) + 10;
+    if (defendendo) {
+      dano = Math.floor(dano / 2);
+      defendendo = false;
+    }
+
+    vidaJogador -= dano;
+    if (vidaJogador < 0) vidaJogador = 0;
+
+    mensagemDiv.textContent = `O inimigo atacou e causou ${dano} de dano!`;
+    tocarSom(somAtaque);
+
+    animarAtaque(imgInimigo);
+    atualizarVida();
+
+    if (vidaJogador === 0) {
+      tocarSom(somDerrota);
+      mensagemDiv.textContent = "Você foi derrotado! Tente novamente.";
+      jogoDiv.style.display = "none";
+      telaInicial.style.display = "block";
+      somTheme.pause();
+    }
+  }
+
+  function animarAtaque(elemento) {
+    elemento.style.transition = "transform 0.2s";
+    elemento.style.transform = "translateX(20px)";
     setTimeout(() => {
-      inimigoAtaca();
-    }, 1500);
-  }
-}
-
-// Função de defesa do jogador
-function defender() {
-  if (vidaJogador <= 0 || vidaInimigo <= 0) return;
-
-  defendendo = true;
-  mensagemDiv.textContent = "Você está defendendo! Reduzindo dano do próximo ataque.";
-  somDefesa.play();
-
-  setTimeout(() => {
-    inimigoAtaca();
-  }, 1500);
-}
-
-// Função do inimigo atacar
-function inimigoAtaca() {
-  if (vidaJogador <= 0 || vidaInimigo <= 0) return;
-
-  let dano = Math.floor(Math.random() * 20) + 10;
-  if (defendendo) {
-    dano = Math.floor(dano / 2);
-    defendendo = false;
+      elemento.style.transform = "translateX(0)";
+    }, 200);
   }
 
-  vidaJogador -= dano;
-  if (vidaJogador < 0) vidaJogador = 0;
-
-  mensagemDiv.textContent = `O inimigo atacou causando ${dano} de dano!`;
-  somAtaque.play();
-
-  atualizarVida();
-  animarAtaque(imgInimigo);
-
-  if (vidaJogador === 0) {
-    somDerrota.play();
-    mensagemDiv.textContent = "Você foi derrotado! Tente novamente.";
-    jogoDiv.style.display = "none";
-    telaInicial.style.display = "block";
-    somTheme.pause();
+  function tocarSom(som) {
+    try {
+      som.currentTime = 0;
+      som.play();
+    } catch {
+      // Pode falhar se o som não carregar ou se o usuário não interagiu ainda
+    }
   }
-}
-
-// Função simples de animação de ataque
-function animarAtaque(imgElement) {
-  imgElement.style.transition = "transform 0.2s";
-  imgElement.style.transform = "translateX(20px)";
-  setTimeout(() => {
-    imgElement.style.transform = "translateX(0)";
-  }, 200);
-}
+});
