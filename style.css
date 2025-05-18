@@ -36,6 +36,7 @@ button:hover {
   justify-content: center;
   gap: 40px;
   margin-top: 50px;
+  flex-wrap: wrap;
 }
 
 .personagem {
@@ -58,10 +59,12 @@ button:hover {
   justify-content: center;
   gap: 15px;
   margin-top: 20px;
+  width: 200px;
 }
 
 #mensagem {
   margin-top: 30px;
   font-size: 1.5rem;
   min-height: 40px;
+  width: 100%;
 }
