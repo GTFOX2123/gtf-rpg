@@ -1,33 +1,50 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" >
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>GTX RPG - Naruto</title>
+  <title>GTX RPG - Naruto Demo Melhorado</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>GTX RPG - Naruto Demo Completo</h1>
-  <div id="game">
-    <div id="character-select">
-      <h2>Escolha seu personagem</h2>
-      <button onclick="selectCharacter('Naruto')">Naruto</button>
-      <button onclick="selectCharacter('Sasuke')">Sasuke</button>
-      <button onclick="selectCharacter('Sakura')">Sakura</button>
+  <div id="game-container">
+    <header>
+      <h1>GTX RPG - Naruto</h1>
+      <div id="level-display">Nível: 1 | XP: 0/100</div>
+    </header>
+
+    <div id="battlefield">
+      <div id="player-area" class="character-area">
+        <div id="player-sprite" class="character naruto idle"></div>
+        <div class="hp-bar">
+          <div id="player-hp" class="hp-fill"></div>
+        </div>
+        <div id="player-hp-text" class="hp-text">100 / 100</div>
+      </div>
+
+      <div id="enemy-area" class="character-area">
+        <div id="enemy-sprite" class="character sasuke idle"></div>
+        <div class="hp-bar">
+          <div id="enemy-hp" class="hp-fill enemy"></div>
+        </div>
+        <div id="enemy-hp-text" class="hp-text">90 / 90</div>
+      </div>
     </div>
 
-    <div id="battle" style="display:none;">
-      <h2>Batalha</h2>
-      <div class="character-container">
-        <div id="player-character" class="character"></div>
-        <div id="enemy-character" class="character"></div>
-      </div>
-      <div id="status"></div>
-      <button onclick="attack()" id="attack-btn">Atacar</button>
-      <button onclick="resetGame()" id="reset-btn" style="display:none;">Recomeçar</button>
-      <div id="log"></div>
+    <div id="action-menu">
+      <button id="attack-btn">Atacar</button>
+      <button id="defend-btn">Defender</button>
+      <button id="item-btn">Usar Pergaminho</button>
+    </div>
+
+    <div id="battle-log"></div>
+
+    <div id="game-over" style="display:none;">
+      <h2 id="game-over-message"></h2>
+      <button id="restart-btn">Recomeçar</button>
     </div>
   </div>
+
   <script src="script.js"></script>
 </body>
 </html>
