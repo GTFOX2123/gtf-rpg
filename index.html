@@ -6,24 +6,33 @@
   <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-  <div id="tela-inicial">
+  <div id="tela-inicial" class="centralizar">
     <h1>GTX RPG</h1>
     <button id="btn-iniciar">Iniciar Jogo</button>
   </div>
 
-  <div id="jogo" style="display:none;">
+  <div id="jogo" style="display:none;" class="centralizar">
     <div class="personagem jogador">
       <img id="img-jogador" src="img/naruto.png" alt="Naruto" />
+      <div class="barra-vida">
+        <div id="barra-vida-jogador" class="vida"></div>
+      </div>
       <p>Vida: <span id="vida-jogador">100</span></p>
     </div>
+
     <div class="personagem inimigo">
       <img id="img-inimigo" src="img/sasuke.png" alt="Sasuke" />
+      <div class="barra-vida">
+        <div id="barra-vida-inimigo" class="vida"></div>
+      </div>
       <p>Vida: <span id="vida-inimigo">100</span></p>
     </div>
+
     <div class="acoes">
       <button id="btn-atacar">Atacar</button>
       <button id="btn-defender">Defender</button>
     </div>
+
     <div id="mensagem"></div>
   </div>
 
