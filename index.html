@@ -4,12 +4,11 @@
   <meta charset="UTF-8" />
   <title>GTX RPG - Naruto</title>
   <link rel="stylesheet" href="css/style.css" />
-  <audio id="theme" src="audio/theme.mp3" autoplay loop></audio>
 </head>
 <body>
   <div id="tela-inicial">
     <h1>GTX RPG</h1>
-    <button onclick="iniciarJogo()">Iniciar Jogo</button>
+    <button id="btn-iniciar">Iniciar Jogo</button>
   </div>
 
   <div id="jogo" style="display:none;">
@@ -22,8 +21,8 @@
       <p>Vida: <span id="vida-inimigo">100</span></p>
     </div>
     <div class="acoes">
-      <button onclick="atacar()">Atacar</button>
-      <button onclick="defender()">Defender</button>
+      <button id="btn-atacar">Atacar</button>
+      <button id="btn-defender">Defender</button>
     </div>
     <div id="mensagem"></div>
   </div>
