@@ -2,18 +2,27 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Naruto RPG</title>
-  <link rel="stylesheet" href="style.css"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>GTX RPG - Naruto</title>
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Naruto RPG Demo</h1>
+  <h1>GTX RPG - Naruto Demo Completo</h1>
   <div id="game">
-    <p>Escolha seu personagem:</p>
-    <button onclick="selectCharacter('Naruto')">Naruto</button>
-    <button onclick="selectCharacter('Sasuke')">Sasuke</button>
-    <button onclick="selectCharacter('Sakura')">Sakura</button>
-    <div id="output"></div>
+    <div id="character-select">
+      <h2>Escolha seu personagem</h2>
+      <button onclick="selectCharacter('Naruto')">Naruto</button>
+      <button onclick="selectCharacter('Sasuke')">Sasuke</button>
+      <button onclick="selectCharacter('Sakura')">Sakura</button>
+    </div>
+
+    <div id="battle" style="display:none;">
+      <h2>Batalha</h2>
+      <div id="status"></div>
+      <button onclick="attack()" id="attack-btn">Atacar</button>
+      <button onclick="resetGame()" id="reset-btn" style="display:none;">Recomeçar</button>
+      <div id="log"></div>
+    </div>
   </div>
   <script src="script.js"></script>
 </body>
